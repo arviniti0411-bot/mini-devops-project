@@ -1,0 +1,44 @@
+name: Day 14 Pipeline
+
+# Trigger: Run this whenever we push to the main branch
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  # The Build Job
+  build-stage:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Run Build
+        run: |
+          echo "🔨 Building the application..."
+          echo "Pre-processing files..."
+          sleep 2
+
+  # The Test Job
+  test-stage:
+    runs-on: ubuntu-latest
+    needs: build-stage
+    steps:
+      - name: Run Unit Tests
+        run: |
+          echo "🧪 Running Tests..."
+          # A simple test to check if the file exists
+          ls app.sh
+          echo "Test Passed: app.sh exists!"
+
+  # The Deploy Job
+  deploy-stage:
+    runs-on: ubuntu-latest
+    needs: test-stage
+    steps:
+      - name: Deploying
+        run: |
+          echo "🚀 Deploying to Production Server..."
+          chmod +x app.sh
+          ./app.sh
+          echo "Deployment Successful!"
